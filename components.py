@@ -2,7 +2,7 @@ import streamlit as st
 import time 
 
 
-def animated_typing_title(text, delay=0.02, font_size="42px", color="#3d3a2a"):
+def animated_typing_title(text, delay=0.02, font_size="42px", color="#FFFFFF"):
     """
     Display the provided text with a typing animation.
     """

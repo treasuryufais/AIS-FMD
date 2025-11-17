@@ -226,13 +226,18 @@ if not month_transactions.empty:
         # Create an editable dataframe
         edited_df = st.session_state.edited_data.copy()
         
-        # Convert dates to string for display
+        # Convert data for display (keep transaction_date as datetime for DateColumn)
         display_df = edited_df.copy()
-        display_df["transaction_date"] = display_df["transaction_date"].dt.strftime("%Y-%m-%d")
         display_df["amount"] = display_df["amount"].apply(lambda x: f"${x:,.2f}")
         
-        # Create editors for purpose and budget columns
+        # Create editors for purpose, budget, and date columns
         editors = {
+            "transaction_date": st.column_config.DateColumn(
+                "Date",
+                format="YYYY-MM-DD",
+                required=True,
+                help="Select the transaction date",
+            ),
             "purpose": st.column_config.SelectboxColumn(
                 "Purpose",
                 options=purpose_options,  # Removed empty option to prevent accidental clearing
@@ -252,10 +257,6 @@ if not month_transactions.empty:
         edited_df = st.data_editor(
             display_df[["transaction_date", "amount", "details", "purpose", "budget_category", "account"]],
             column_config={
-                "transaction_date": st.column_config.TextColumn(
-                    "Date",
-                    disabled=True,
-                ),
                 "amount": st.column_config.TextColumn(
                     "Amount",
                     disabled=True,
@@ -302,22 +303,29 @@ if not month_transactions.empty:
                     else:
                         budget_cat = None
                     
+                    # Convert date to proper format
+                    transaction_date = pd.to_datetime(row["transaction_date"]).strftime("%Y-%m-%d") if pd.notna(row["transaction_date"]) else None
+                    
                     # Compare changes carefully
                     current_purpose = row["purpose"] if pd.notna(row["purpose"]) and row["purpose"] != "" else None
                     current_budget = budget_cat
+                    current_date = transaction_date
                     
                     original_purpose = original["purpose"] if pd.notna(original["purpose"]) else None
                     original_budget = original["budget_category"] if pd.notna(original["budget_category"]) else None
+                    original_date = pd.to_datetime(original["transaction_date"]).strftime("%Y-%m-%d") if pd.notna(original["transaction_date"]) else None
                     
                     # Check if values actually changed
                     purpose_changed = current_purpose != original_purpose
                     budget_changed = current_budget != original_budget
+                    date_changed = current_date != original_date
                     
-                    if purpose_changed or budget_changed:
+                    if purpose_changed or budget_changed or date_changed:
                         try:
                             update_data = {
                                 "purpose": current_purpose,
-                                "budget_category": current_budget
+                                "budget_category": current_budget,
+                                "transaction_date": current_date
                             }
                             
                             response = admin.table("transactions").update(update_data).eq(

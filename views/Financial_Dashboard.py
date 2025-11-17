@@ -233,7 +233,7 @@ def get_historical_budget_spending():
         .merge(df_terms[["TermID", "Semester"]], left_on="termid", right_on="TermID", how="left")
         .merge(df_committees[["CommitteeID", "Committee_Name", "Committee_Type"]], 
                left_on="committeeid", right_on="CommitteeID", how="left")
-        .query("Committee_Type == 'committee'")
+        .query("Committee_Type == 'committee'" or "Committee_Name == 'Meeting Food'")
         .loc[:, ["Semester", "Committee_Name", "budget_amount"]]
     )
     

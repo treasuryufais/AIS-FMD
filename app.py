@@ -107,7 +107,7 @@ def main_app(user_email: str):
         {"page": "views/Homepage.py",                "title": "Homepage",                                    "icon": ":material/home:",         "default": True},
         {"page": "views/Financial_Dashboard.py",     "title": "Financial Dashboard",                          "icon": ":material/analytics:"},
         {"page": "views/Transaction_Editor.py",      "title": "Transaction Editor",                           "icon": ":material/edit:"},
-        {"page": "views/AI_Assistant.py",            "title": "AI Assistant",                                 "icon": ":material/smart_toy:"},
+        # {"page": "views/AI_Assistant.py",            "title": "AI Assistant",                                 "icon": ":material/smart_toy:"},  # Disabled - under development
         {"page": "views/Treasury_Management.py",     "title": "Treasury Management",                           "icon": ":material/account_balance:"},
     ]
 
