@@ -1,5 +1,6 @@
 from utils import register_nav_pages, get_supabase
 import streamlit as st
+import time
 from supabase import Client
 from components import animated_typing_title, apply_nav_title
 import pandas as pd
@@ -156,8 +157,16 @@ def auth_screen():
             if hasattr(user, "error") and user.error:
                 st.error(f"Registration failed: {user.error.message}")
             elif hasattr(user, "user") and user.user:
-                st.success("Registration successful! Please check your email to confirm.")
-                # force a rerun so they can switch to Login
+                # Show success message
+                st.success("✅ Registration successful!")
+                st.info("📧 A confirmation email has been sent to your inbox. Please verify your email address.")
+                
+                # Automatically log in the user
+                st.session_state.user_email = user.user.email
+                
+                # Show welcome message and auto-redirect
+                with st.spinner("Logging you in..."):
+                    time.sleep(1.5)  # Brief pause to show the confirmation message
                 st.rerun()
 
     else:  # Login flow

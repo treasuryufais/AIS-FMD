@@ -212,8 +212,8 @@ if not month_transactions.empty:
     # Create committee options with ID and name combined
     committee_options = [""] + [f"{i} - {committee_mapping.get(str(i), '')}" for i in range(1, 19)]
     
-    # Initialize or refresh edited data when month or filter changes
-    current_filter_key = f"{selected_month_option}-{account_filter}-{search_term}-{type_filter}"
+    # Initialize or refresh edited data when semester, month, or filter changes
+    current_filter_key = f"{selected_semester}-{selected_month_option}-{account_filter}-{search_term}-{type_filter}"
     if "edited_data" not in st.session_state or st.session_state.get("edited_filter_key") != current_filter_key:
         st.session_state.edited_data = month_transactions.copy()
         # Convert budget_category to the combined format for display
