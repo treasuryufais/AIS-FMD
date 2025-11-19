@@ -157,16 +157,24 @@ def auth_screen():
             if hasattr(user, "error") and user.error:
                 st.error(f"Registration failed: {user.error.message}")
             elif hasattr(user, "user") and user.user:
+                # Immediately sign out to prevent auto-login before email verification
+                try:
+                    supabase.auth.sign_out()
+                except:
+                    pass  # Ignore sign-out errors
+                
+                # Ensure session state doesn't have user email
+                if "user_email" in st.session_state:
+                    st.session_state.user_email = None
+                
                 # Show success message
                 st.success("✅ Registration successful!")
-                st.info("📧 A confirmation email has been sent to your inbox. Please verify your email address.")
+                st.info("📧 Please check your email inbox and verify your account before logging in.")
+                st.warning("⚠️ You must click the verification link in your email before you can log in.")
                 
-                # Automatically log in the user
-                st.session_state.user_email = user.user.email
-                
-                # Show welcome message and auto-redirect
-                with st.spinner("Logging you in..."):
-                    time.sleep(1.5)  # Brief pause to show the confirmation message
+                # Auto-refresh after a few seconds to switch to login
+                with st.spinner("Refreshing login page..."):
+                    time.sleep(3)  # Give users time to read the messages
                 st.rerun()
 
     else:  # Login flow
